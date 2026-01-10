@@ -1,0 +1,14 @@
+# Railway Deployment Files
+.git
+.gitignore
+.env.local
+.env.*.local
+*.log
+node_modules/
+vendor/
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+*~
