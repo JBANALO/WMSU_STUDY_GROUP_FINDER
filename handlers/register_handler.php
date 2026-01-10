@@ -1,0 +1,72 @@
+<?php
+require_once '../config/database.php';
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $first_name = trim($_POST['first_name']);
+    $middle_name = trim($_POST['middle_name'] ?? '');
+    $last_name = trim($_POST['last_name']);
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Validate WMSU email domain
+    if (!str_ends_with($email, '@wmsu.edu.ph')) {
+        $_SESSION['error'] = "Only WMSU emails (@wmsu.edu.ph) are allowed";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+
+    // Validate passwords match
+    if ($password !== $confirm_password) {
+        $_SESSION['error'] = "Passwords do not match";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+
+    // Validate password length
+    if (strlen($password) < 6) {
+        $_SESSION['error'] = "Password must be at least 6 characters";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+
+    // Check if email already exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        $_SESSION['error'] = "Email already registered";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+
+    // Check if username already exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    if ($stmt->fetch()) {
+        $_SESSION['error'] = "Username already taken";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+
+    // Hash password and create account
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    
+    try {
+        $stmt = $pdo->prepare("
+            INSERT INTO users (first_name, middle_name, last_name, username, email, password, status, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
+        ");
+        $stmt->execute([$first_name, $middle_name, $last_name, $username, $email, $hashed_password]);
+        
+        $_SESSION['success'] = "Account created! Waiting for admin approval.";
+        header("Location: ../index.php?page=login");
+        exit();
+    } catch(PDOException $e) {
+        $_SESSION['error'] = "Registration failed. Please try again.";
+        header("Location: ../index.php?page=register");
+        exit();
+    }
+}
+?>
