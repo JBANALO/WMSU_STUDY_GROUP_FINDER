@@ -47,14 +47,19 @@ SITE_URL=[Your Railway app URL]
 SECRET_KEY=[Generate a random string]
 ```
 
-### Step 5: Database Setup
-1. Connect to MySQL database using:
-   - Host: From Railway MySQL service
-   - User: From environment variables
-   - Password: From environment variables
-   - Database: From environment variables
+### Step 5: Database Setup (Automatic)
+Simply visit your Railway app URL with `/setup_database.php`:
+```
+https://your-railway-url.app/setup_database.php
+```
 
-2. Run database schema (use a MySQL client like phpMyAdmin or Adminer):
+The setup script will:
+- ✓ Connect to Railway's MySQL database
+- ✓ Create all required tables automatically
+- ✓ Show confirmation when complete
+
+**Alternative Manual Setup:**
+If you prefer, manually run the schema using a MySQL client like phpMyAdmin or Adminer:
 ```sql
 -- Create users table
 CREATE TABLE users (
