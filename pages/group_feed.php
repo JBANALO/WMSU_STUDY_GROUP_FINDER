@@ -342,12 +342,148 @@ $is_member = (bool)$stmt->fetch();
                 padding: 1rem;
             }
 
+            .header-content {
+                padding: 0;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .back-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+
+            .header-title {
+                font-size: 1.2rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+
             .group-name {
                 font-size: 1.75rem;
             }
 
             .group-card {
                 padding: 1.5rem;
+            }
+
+            .btn-announcement {
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+
+            .announcement-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .announcement-title {
+                font-size: 1rem;
+            }
+
+            .announcement-content {
+                font-size: 13px;
+            }
+
+            .announcement-meta {
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .back-btn {
+                font-size: 12px;
+                padding: 5px 10px;
+            }
+
+            .page-header {
+                padding: 1rem 0;
+            }
+
+            .page-title {
+                font-size: 1.2rem;
+                word-break: break-word;
+            }
+
+            .group-meta {
+                font-size: 11px;
+                flex-wrap: wrap;
+            }
+
+            .group-card {
+                padding: 1rem;
+            }
+
+            .btn-announcement {
+                width: 100%;
+                justify-content: center;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .announcement-card {
+                padding: 1rem;
+            }
+
+            .announcement-header {
+                gap: 6px;
+            }
+
+            .announcement-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 14px;
+            }
+
+            .announcement-title {
+                font-size: 0.95rem;
+                word-break: break-word;
+            }
+
+            .announcement-content {
+                font-size: 12px;
+                line-height: 1.5;
+            }
+
+            .announcement-meta {
+                font-size: 10px;
+                gap: 6px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem 1rem;
+                margin: 10% auto;
+            }
+
+            .modal-content h2 {
+                font-size: 1.2rem;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 13px;
             }
         }
     </style>

@@ -10,53 +10,36 @@
         <?php if (isLoggedIn()): ?>
             <?php if (isAdmin()): ?>
                 <!-- Admin Navigation -->
-                <a href="?page=admin_dashboard"><i class="fas fa-user-tie"></i> Admin Dashboard</a>
-                <a href="?page=dashboard"><i class="fas fa-th-large"></i> Groups</a>
-                <a href="?page=notifications" style="position: relative;">
-                    <i class="fas fa-envelope"></i> Notifications
-                    <?php 
-                    require_once 'config/database.php';
-                    try {
-                        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = FALSE");
-                        $stmt->execute([$_SESSION['user_id']]);
-                        $unread_count = $stmt->fetch()['count'];
-                        if ($unread_count > 0): 
-                    ?>
-                        <span style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">
-                            <?= $unread_count > 99 ? '99+' : $unread_count ?>
-                        </span>
-                    <?php 
-                        endif;
-                    } catch(PDOException $e) {
-                        // Notifications table might not exist
-                    }
-                    ?>
-                </a>
+                <a href="?page=admin_dashboard"><i class="fas fa-user-tie"></i> <span class="nav-text">Admin Dashboard</span></a>
+                <a href="?page=dashboard"><i class="fas fa-th-large"></i> <span class="nav-text">Groups</span></a>
             <?php else: ?>
                 <!-- Student Navigation -->
-                <a href="?page=dashboard"><i class="fas fa-home"></i> Home</a>
-                <a href="?page=my_groups"><i class="fas fa-book"></i> My Study Groups</a>
-                <a href="?page=notifications" style="position: relative;">
-                    <i class="fas fa-envelope"></i> Notifications
-                    <?php 
-                    require_once 'config/database.php';
-                    try {
-                        $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = FALSE");
-                        $stmt->execute([$_SESSION['user_id']]);
-                        $unread_count = $stmt->fetch()['count'];
-                        if ($unread_count > 0): 
-                    ?>
-                        <span style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">
-                            <?= $unread_count > 99 ? '99+' : $unread_count ?>
-                        </span>
-                    <?php 
-                        endif;
-                    } catch(PDOException $e) {
-                        // Notifications table might not exist
-                    }
-                    ?>
-                </a>
+                <a href="?page=dashboard"><i class="fas fa-home"></i> <span class="nav-text">Home</span></a>
+                <a href="?page=my_groups"><i class="fas fa-book"></i> <span class="nav-text">My Study Groups</span></a>
             <?php endif; ?>
+            
+            <!-- Notifications - After main nav, before profile -->
+            <a href="?page=notifications" style="position: relative;" class="notification-link">
+                <i class="fas fa-envelope"></i>
+                <span class="nav-text">Notifications</span>
+                <?php 
+                require_once 'config/database.php';
+                try {
+                    $stmt = $pdo->prepare("SELECT COUNT(*) as count FROM notifications WHERE user_id = ? AND is_read = FALSE");
+                    $stmt->execute([$_SESSION['user_id']]);
+                    $unread_count = $stmt->fetch()['count'];
+                    if ($unread_count > 0): 
+                ?>
+                    <span class="notification-badge" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">
+                        <?= $unread_count > 99 ? '99+' : $unread_count ?>
+                    </span>
+                <?php 
+                    endif;
+                } catch(PDOException $e) {
+                    // Notifications table might not exist
+                }
+                ?>
+            </a>
             
             <!-- User Info with Dropdown -->
             <?php
@@ -74,11 +57,13 @@
             <div style="position: relative; display: inline-block;">
                 <button style="background: transparent; border: none; color: white; cursor: pointer; padding: 8px 12px; display: flex; align-items: center; gap: 8px; font-size: 14px;" onclick="toggleProfileMenu()" id="profileBtn">
                     <i class="fas fa-user-circle"></i> 
+                    <span class="nav-text">
                     <?php if (isAdmin()): ?>
                         Admin
                     <?php else: ?>
                         <?= htmlspecialchars($_SESSION['full_name']) ?>
                     <?php endif; ?>
+                    </span>
                     <i class="fas fa-caret-down"></i>
                 </button>
                 
