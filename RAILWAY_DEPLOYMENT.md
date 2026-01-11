@@ -45,7 +45,23 @@ DB_PASS=[MySQL Password from Step 3]
 DB_NAME=[Database name from Step 3]
 SITE_URL=[Your Railway app URL]
 SECRET_KEY=[Generate a random string]
+GOOGLE_CLIENT_ID=[From Google Cloud Console]
+GOOGLE_CLIENT_SECRET=[From Google Cloud Console]
 ```
+
+### Step 4.1: Setup Google OAuth (Required for Sign-In)
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable **Google+ API**
+4. Go to **Credentials** → **Create Credentials** → **OAuth 2.0 Client ID**
+5. Application type: **Web application**
+6. Add Authorized redirect URIs:
+   - `https://your-railway-app.up.railway.app/handlers/google_oauth_handler.php`
+   - Replace `your-railway-app` with your actual Railway domain
+7. Copy **Client ID** and **Client Secret**
+8. Add them to Railway environment variables:
+   - `GOOGLE_CLIENT_ID`
+   - `GOOGLE_CLIENT_SECRET`
 
 ### Step 5: Database Setup
 1. Connect to MySQL database using:
@@ -61,6 +77,7 @@ CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(255) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
+  google_id VARCHAR(255) UNIQUE NULL,
   first_name VARCHAR(255),
   middle_name VARCHAR(255),
   last_name VARCHAR(255),
