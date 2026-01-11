@@ -38,6 +38,7 @@ $tables = [
         last_name VARCHAR(255),
         password VARCHAR(255) NOT NULL,
         status ENUM('pending', 'approved', 'declined') DEFAULT 'pending',
+        decline_reason TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )",
     
@@ -137,6 +138,20 @@ try {
     }
 } catch(PDOException $e) {
     echo "⚠ Could not check/add middle_name column: " . $e->getMessage() . "\n";
+}
+
+// Ensure decline_reason column exists in users table
+try {
+    $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'decline_reason'");
+    if (!$stmt->fetch()) {
+        echo "Adding decline_reason column to users table...\n";
+        $pdo->exec("ALTER TABLE users ADD COLUMN decline_reason TEXT NULL AFTER status");
+        echo "✓ decline_reason column added\n";
+    } else {
+        echo "✓ decline_reason column already exists\n";
+    }
+} catch(PDOException $e) {
+    echo "⚠ Could not check/add decline_reason column: " . $e->getMessage() . "\n";
 }
 
 echo "\n=== Setup Complete! ===\n";
