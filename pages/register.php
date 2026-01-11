@@ -112,6 +112,11 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Middle Name</label>
+                        <input type="text" name="middle_name" placeholder="Middle Name (Optional)">
+                    </div>
+
+                    <div class="form-group">
                         <label>Username</label>
                         <input type="text" name="username" placeholder="Choose username" required>
                     </div>
