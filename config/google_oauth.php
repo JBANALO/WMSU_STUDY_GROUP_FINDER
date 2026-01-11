@@ -67,8 +67,13 @@ function isGoogleOAuthAvailable() {
         return false;
     }
     
-    // Check if Google API client exists
-    if (!file_exists(__DIR__ . '/../vendor/google/apiclient/src/Client.php')) {
+    // Check if Google API client package exists (this is the key check!)
+    if (!file_exists(__DIR__ . '/../vendor/google/apiclient')) {
+        return false;
+    }
+    
+    // Check if Google API client services exists (the missing package)
+    if (!file_exists(__DIR__ . '/../vendor/google/apiclient-services')) {
         return false;
     }
     
