@@ -19,14 +19,31 @@ $is_production = isset($_ENV['RAILWAY_ENVIRONMENT']) ||
                  (isset($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], 'railway.app') !== false);
 
 // Google OAuth Credentials
-define('GOOGLE_CLIENT_ID', $is_production 
-    ? ($_ENV['GOOGLE_CLIENT_ID'] ?? 'YOUR_PRODUCTION_CLIENT_ID')
-    : 'YOUR_LOCAL_CLIENT_ID'
+// For local: credentials are in config/.env.local (not committed to git)
+// For Railway: Set via environment variables in Railway dashboard
+
+// Load local credentials if file exists
+$local_env_file = __DIR__ . '/.env.local';
+if (file_exists($local_env_file) && !$is_production) {
+    $lines = file($local_env_file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos($line, '=') !== false && strpos($line, '#') !== 0) {
+            list($key, $value) = explode('=', $line, 2);
+            putenv(trim($key) . '=' . trim($value));
+        }
+    }
+}
+
+define('GOOGLE_CLIENT_ID', 
+    $is_production 
+        ? ($_ENV['GOOGLE_CLIENT_ID'] ?? '') 
+        : (getenv('GOOGLE_CLIENT_ID') ?: '')
 );
 
-define('GOOGLE_CLIENT_SECRET', $is_production 
-    ? ($_ENV['GOOGLE_CLIENT_SECRET'] ?? 'YOUR_PRODUCTION_CLIENT_SECRET')
-    : 'YOUR_LOCAL_CLIENT_SECRET'
+define('GOOGLE_CLIENT_SECRET', 
+    $is_production 
+        ? ($_ENV['GOOGLE_CLIENT_SECRET'] ?? '') 
+        : (getenv('GOOGLE_CLIENT_SECRET') ?: '')
 );
 
 // Redirect URI
