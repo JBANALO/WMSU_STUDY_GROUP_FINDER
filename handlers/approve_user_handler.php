@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$user_id]);
             
             // Create notification for approved user
-            $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, title, message) VALUES (?, 'account', 'Account Approved', 'Your account has been approved! You can now login.')");
+            $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, title, message, related_id) VALUES (?, 'account', 'Account Approved', 'Your account has been approved! You can now login.', NULL)");
             $stmt->execute([$user_id]);
             
             $_SESSION['success'] = "User account approved!";
@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute([$decline_reason ?: 'Account not approved', $user_id]);
             
             // Create notification for declined user
-            $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, title, message) VALUES (?, 'account', 'Account Declined', ?)");
+            $stmt = $pdo->prepare("INSERT INTO notifications (user_id, type, title, message, related_id) VALUES (?, 'account', 'Account Declined', ?, NULL)");
             $stmt->execute([$user_id, 'Your account was declined. Reason: ' . ($decline_reason ?: 'Account not approved')]);
             
             $_SESSION['success'] = "User account declined!";

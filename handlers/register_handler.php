@@ -59,6 +59,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
         ");
         $stmt->execute([$first_name, $middle_name, $last_name, $username, $email, $hashed_password]);
+        $new_user_id = $pdo->lastInsertId();
+        
+        // Notify all admins about new user registration
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username LIKE 'admin%' OR email LIKE 'admin%'");
+        $stmt->execute();
+        $admins = $stmt->fetchAll();
+        
+        foreach ($admins as $admin) {
+            $stmt = $pdo->prepare("
+                INSERT INTO notifications (user_id, type, title, message, related_id)
+                VALUES (?, 'user', 'New User Registration', ?, ?)
+            ");
+            $stmt->execute([
+                $admin['id'],
+                "{$first_name} {$last_name} ({$email}) has registered and is waiting for approval.",
+                $new_user_id
+            ]);
+        }
         
         $_SESSION['success'] = "Account created! Waiting for admin approval.";
         header("Location: ../index.php?page=login");

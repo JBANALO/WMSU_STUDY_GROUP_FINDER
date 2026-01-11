@@ -94,6 +94,7 @@ $tables = [
         type VARCHAR(50),
         title VARCHAR(255),
         message TEXT,
+        related_id INT,
         is_read BOOLEAN DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users(id)

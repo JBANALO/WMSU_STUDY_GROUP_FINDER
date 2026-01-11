@@ -47,21 +47,16 @@ SITE_URL=[Your Railway app URL]
 SECRET_KEY=[Generate a random string]
 ```
 
-### Step 5: Database Setup (Automatic)
-Simply visit your Railway app URL with `/setup_database.php`:
-```
-https://your-railway-url.app/setup_database.php
-```
+### Step 5: Database Setup
+1. Connect to MySQL database using:
+   - Host: From Railway MySQL service
+   - User: From environment variables
+   - Password: From environment variables
+   - Database: From environment variables
 
-The setup script will:
-- ✓ Connect to Railway's MySQL database
-- ✓ Create all required tables automatically
-- ✓ Show confirmation when complete
-
-**Alternative Manual Setup:**
-If you prefer, manually run the schema using a MySQL client like phpMyAdmin or Adminer:
+2. Run database schema (use a MySQL client like phpMyAdmin or Adminer):
 ```sql
--- Create users table
+
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(255) UNIQUE NOT NULL,
@@ -73,7 +68,7 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create study_groups table
+
 CREATE TABLE study_groups (
   id INT PRIMARY KEY AUTO_INCREMENT,
   group_name VARCHAR(255) NOT NULL,
@@ -86,7 +81,7 @@ CREATE TABLE study_groups (
   FOREIGN KEY (creator_id) REFERENCES users(id)
 );
 
--- Create group_members table
+
 CREATE TABLE group_members (
   id INT PRIMARY KEY AUTO_INCREMENT,
   group_id INT NOT NULL,
@@ -97,7 +92,7 @@ CREATE TABLE group_members (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Create group_messages table
+
 CREATE TABLE group_messages (
   id INT PRIMARY KEY AUTO_INCREMENT,
   group_id INT NOT NULL,
@@ -110,7 +105,7 @@ CREATE TABLE group_messages (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Create meetings table
+
 CREATE TABLE meetings (
   id INT PRIMARY KEY AUTO_INCREMENT,
   group_id INT NOT NULL,
@@ -125,7 +120,7 @@ CREATE TABLE meetings (
   FOREIGN KEY (created_by) REFERENCES users(id)
 );
 
--- Create notifications table
+
 CREATE TABLE notifications (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
@@ -137,7 +132,7 @@ CREATE TABLE notifications (
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
--- Create user_last_seen table
+
 CREATE TABLE user_last_seen (
   id INT PRIMARY KEY AUTO_INCREMENT,
   user_id INT NOT NULL,
