@@ -105,6 +105,7 @@ function getGoogleClient() {
  * Get Google Sign-In URL
  */
 function getGoogleSignInUrl() {
+    // Check availability FIRST before doing anything
     if (!isGoogleOAuthAvailable()) {
         return '#';
     }
