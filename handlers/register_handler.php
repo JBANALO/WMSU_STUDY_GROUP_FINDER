@@ -54,6 +54,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     
     try {
+        $pdo->beginTransaction();
+        
         $stmt = $pdo->prepare("
             INSERT INTO users (first_name, middle_name, last_name, username, email, password, status, created_at)
             VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
@@ -62,27 +64,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $new_user_id = $pdo->lastInsertId();
         
         // Notify all admins about new user registration
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE username LIKE 'admin%' OR email LIKE 'admin%'");
-        $stmt->execute();
-        $admins = $stmt->fetchAll();
-        
-        foreach ($admins as $admin) {
-            $stmt = $pdo->prepare("
-                INSERT INTO notifications (user_id, type, title, message, related_id)
-                VALUES (?, 'user', 'New User Registration', ?, ?)
-            ");
-            $stmt->execute([
-                $admin['id'],
-                "{$first_name} {$last_name} ({$email}) has registered and is waiting for approval.",
-                $new_user_id
-            ]);
+        try {
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE username LIKE 'admin%' OR email LIKE 'admin%'");
+            $stmt->execute();
+            $admins = $stmt->fetchAll();
+            
+            foreach ($admins as $admin) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO notifications (user_id, type, title, message, related_id)
+                    VALUES (?, 'user', 'New User Registration', ?, ?)
+                ");
+                $stmt->execute([
+                    $admin['id'],
+                    "{$first_name} {$last_name} ({$email}) has registered and is waiting for approval.",
+                    $new_user_id
+                ]);
+            }
+        } catch(PDOException $notif_error) {
+            // Log notification error but don't fail registration
+            error_log("Notification creation failed: " . $notif_error->getMessage());
         }
+        
+        $pdo->commit();
         
         $_SESSION['success'] = "Account created! Waiting for admin approval.";
         header("Location: ../index.php?page=login");
         exit();
     } catch(PDOException $e) {
-        $_SESSION['error'] = "Registration failed. Please try again.";
+        $pdo->rollBack();
+        error_log("Registration failed: " . $e->getMessage());
+        $_SESSION['error'] = "Registration failed. Please try again. Error: " . $e->getMessage();
         header("Location: ../index.php?page=register");
         exit();
     }
