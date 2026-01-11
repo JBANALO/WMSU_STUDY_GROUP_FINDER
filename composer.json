@@ -2,5 +2,11 @@
     "require": {
         "google/apiclient": "^2.18",
         "phpmailer/phpmailer": "^7.0"
+    },
+    "config": {
+        "platform": {
+            "php": "8.3"
+        },
+        "optimize-autoloader": true
     }
 }

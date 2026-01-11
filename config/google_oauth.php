@@ -88,7 +88,17 @@ function getGoogleClient() {
         throw new Exception('Google OAuth is not configured');
     }
     
-    require_once __DIR__ . '/../vendor/autoload.php';
+    // Try to load autoloader
+    try {
+        require_once __DIR__ . '/../vendor/autoload.php';
+    } catch (Exception $e) {
+        throw new Exception('Vendor autoload failed: ' . $e->getMessage());
+    }
+    
+    // Check if Google_Client class exists after loading
+    if (!class_exists('Google_Client')) {
+        throw new Exception('Google_Client class not found - composer dependencies may not be installed');
+    }
     
     $client = new Google_Client();
     $client->setClientId(GOOGLE_CLIENT_ID);
