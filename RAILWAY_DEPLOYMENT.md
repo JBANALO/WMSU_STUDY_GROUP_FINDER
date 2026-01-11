@@ -143,6 +143,19 @@ CREATE TABLE user_last_seen (
   FOREIGN KEY (user_id) REFERENCES users(id),
   FOREIGN KEY (group_id) REFERENCES study_groups(id)
 );
+
+
+CREATE TABLE notification_preferences (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  group_id INT NOT NULL,
+  enabled BOOLEAN DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  FOREIGN KEY (group_id) REFERENCES study_groups(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_user_group (user_id, group_id)
+);
 ```
 
 ### Step 6: Deploy
