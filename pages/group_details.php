@@ -37,7 +37,8 @@ $group_id = $_GET['id'] ?? null;
             min-width: 0 !important;
         }
         #messagesContainer {
-            min-height: 300px !important;
+            flex: 1 !important;
+            min-height: 0 !important;
         }
         .modal-content {
             width: 95% !important;
@@ -163,8 +164,8 @@ try {
     </div>
 
     <div>
-        <div style="background: white; padding: 0; border-radius: 10px; border: 3px solid #8B0000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-height: 600px; display: flex; flex-direction: column; overflow: hidden;">
-            <div style="background: #8B0000; color: white; padding: 20px; border-bottom: 3px solid #8B0000;">
+        <div style="background: white; padding: 0; border-radius: 10px; border: 3px solid #8B0000; box-shadow: 0 4px 6px rgba(0,0,0,0.1); height: 700px; display: flex; flex-direction: column; overflow: hidden;">
+            <div style="background: #8B0000; color: white; padding: 20px; border-bottom: 3px solid #8B0000; flex-shrink: 0;">
                 <h2 style="color: white; font-size: 20px; margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px;">
                     <span style="font-size: 22px;"><i class="fas fa-users"></i></span> <?= htmlspecialchars($group['group_name']) ?>
                 </h2>
@@ -211,7 +212,7 @@ try {
                 </div>
             </div>
 
-            <div style="padding: 20px; border-bottom: 1px solid #e8e8e8;">
+            <div style="padding: 20px; border-bottom: 1px solid #e8e8e8; flex-shrink: 0;">
                 <h4 style="color: #8B0000; font-size: 14px; margin: 0 0 10px 0; font-weight: bold;">Members</h4>
                 <div style="display: flex; flex-wrap: wrap; gap: 8px;">
                     <?php foreach ($members as $member): ?>
@@ -225,11 +226,11 @@ try {
                 </div>
             </div>
             
-            <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column;">
+            <div id="messagesContainer" style="flex: 1; overflow-y: auto; padding: 20px; background: #f9f9f9; display: flex; flex-direction: column; min-height: 0;">
                 <p style="color: #999; text-align: center; padding: 20px;">No messages yet. Start the conversation!</p>
             </div>
 
-            <div style="padding: 15px 20px; border-top: 1px solid #e8e8e8; background: white;">
+            <div style="padding: 15px 20px; border-top: 1px solid #e8e8e8; background: white; flex-shrink: 0;">
                 <div id="filePreview" style="display: none; font-size: 12px; color: #666; margin-bottom: 8px; padding: 8px 12px; background: #f0f0f0; border-radius: 6px; align-items: center; gap: 8px;">
                     <span><i class="fas fa-paperclip"></i></span> <span id="fileName" style="flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span> 
                     <a href="#" id="clearFile" style="color: #8B0000; text-decoration: none; font-weight: bold; font-size: 16px;">×</a>
