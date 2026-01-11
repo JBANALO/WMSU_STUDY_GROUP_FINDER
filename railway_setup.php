@@ -125,3 +125,6 @@ foreach ($tables as $tableName => $sql) {
 
 echo "\n=== Setup Complete! ===\n";
 echo "All tables have been created successfully.\n";
+
+// Exit with success code
+exit(0);

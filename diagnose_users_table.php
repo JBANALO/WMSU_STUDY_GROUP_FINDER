@@ -41,4 +41,5 @@ try {
 }
 
 echo "\n=== DIAGNOSIS COMPLETE ===\n";
+exit(0);
 ?>
