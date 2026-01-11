@@ -1,5 +1,22 @@
 <?php
+// Process notifications BEFORE any output
 $user_id = $_SESSION['user_id'];
+
+// Try to get all notifications, but handle if table doesn't exist
+$notifications = [];
+try {
+    $stmt = $pdo->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC");
+    $stmt->execute([$user_id]);
+    $notifications = $stmt->fetchAll();
+
+    // Mark all as read
+    if (!empty($notifications)) {
+        $stmt = $pdo->prepare("UPDATE notifications SET is_read = TRUE WHERE user_id = ? AND is_read = FALSE");
+        $stmt->execute([$user_id]);
+    }
+} catch(PDOException $e) {
+    // Table doesn't exist yet
+}
 ?>
 
 <style>
@@ -36,26 +53,6 @@ $user_id = $_SESSION['user_id'];
         }
     }
 </style>
-
-<?php
-$user_id = $_SESSION['user_id'];
-
-// Try to get all notifications, but handle if table doesn't exist
-$notifications = [];
-try {
-    $stmt = $pdo->prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC");
-    $stmt->execute([$user_id]);
-    $notifications = $stmt->fetchAll();
-
-    // Mark all as read
-    if (!empty($notifications)) {
-        $stmt = $pdo->prepare("UPDATE notifications SET is_read = TRUE WHERE user_id = ? AND is_read = FALSE");
-        $stmt->execute([$user_id]);
-    }
-} catch(PDOException $e) {
-    // Table doesn't exist yet
-}
-?>
 
 <div class="dashboard">
     <h2 style="color: white; margin-bottom: 30px; font-size: 28px;"><i class="fas fa-bell"></i> Notifications</h2>

@@ -1,7 +1,12 @@
 <?php
+// Start output buffering to prevent header errors
+ob_start();
+
+// Start session before any output
+session_start();
+
 require_once 'config/database.php';
 require_once 'includes/functions.php';
-session_start();
 
 $page = $_GET['page'] ?? 'register';
 
