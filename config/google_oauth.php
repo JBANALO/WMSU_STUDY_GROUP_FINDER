@@ -62,9 +62,22 @@ define('GOOGLE_SCOPES', [
  * Check if Google OAuth is available
  */
 function isGoogleOAuthAvailable() {
-    return file_exists(__DIR__ . '/../vendor/google/apiclient/src/Client.php') &&
-           GOOGLE_CLIENT_ID !== 'YOUR_LOCAL_CLIENT_ID' &&
-           GOOGLE_CLIENT_ID !== 'YOUR_PRODUCTION_CLIENT_ID';
+    // Check if vendor autoload exists
+    if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+        return false;
+    }
+    
+    // Check if Google API client exists
+    if (!file_exists(__DIR__ . '/../vendor/google/apiclient/src/Client.php')) {
+        return false;
+    }
+    
+    // Check if credentials are configured
+    if (GOOGLE_CLIENT_ID === '' || GOOGLE_CLIENT_SECRET === '') {
+        return false;
+    }
+    
+    return true;
 }
 
 /**
