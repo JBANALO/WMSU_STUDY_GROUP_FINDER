@@ -159,6 +159,32 @@ This guide will help you set up Google Sign-In for the WMSU Study Group Finder a
 2. Check Railway environment variables are set
 3. Check browser console for errors
 
+### Error: "Failed to open stream: No such file or directory" (Railway)
+**Solution:** This means composer dependencies aren't installed on Railway.
+
+**Fix:**
+1. Make sure `composer.json` and `composer.lock` are committed to Git
+2. Railway should auto-detect and run `composer install`
+3. Check Railway deployment logs to verify composer ran
+4. If button shows "Not Configured" it's working correctly - just needs setup
+
+**Force Railway to reinstall:**
+```bash
+# Commit any changes
+git add composer.json composer.lock
+git commit -m "Force composer reinstall"
+git push
+
+# Railway will auto-redeploy and run composer install
+```
+
+### Google button shows "Not Configured"
+**Solution:** This is normal if:
+- Google Client ID/Secret not set in `config/google_oauth.php` (local), OR
+- Environment variables not set on Railway (production)
+
+The button will automatically enable once credentials are configured.
+
 ## Testing Checklist
 
 - [ ] Local Google Sign-In works

@@ -42,9 +42,22 @@ define('GOOGLE_SCOPES', [
 ]);
 
 /**
+ * Check if Google OAuth is available
+ */
+function isGoogleOAuthAvailable() {
+    return file_exists(__DIR__ . '/../vendor/google/apiclient/src/Client.php') &&
+           GOOGLE_CLIENT_ID !== 'YOUR_LOCAL_CLIENT_ID' &&
+           GOOGLE_CLIENT_ID !== 'YOUR_PRODUCTION_CLIENT_ID';
+}
+
+/**
  * Initialize Google Client
  */
 function getGoogleClient() {
+    if (!isGoogleOAuthAvailable()) {
+        throw new Exception('Google OAuth is not configured');
+    }
+    
     require_once __DIR__ . '/../vendor/autoload.php';
     
     $client = new Google_Client();
@@ -62,7 +75,16 @@ function getGoogleClient() {
  * Get Google Sign-In URL
  */
 function getGoogleSignInUrl() {
-    $client = getGoogleClient();
-    return $client->createAuthUrl();
+    if (!isGoogleOAuthAvailable()) {
+        return '#';
+    }
+    
+    try {
+        $client = getGoogleClient();
+        return $client->createAuthUrl();
+    } catch (Exception $e) {
+        error_log('Google OAuth Error: ' . $e->getMessage());
+        return '#';
+    }
 }
 ?>
