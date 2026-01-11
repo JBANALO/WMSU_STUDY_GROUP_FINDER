@@ -154,6 +154,20 @@ try {
     echo "⚠ Could not check/add decline_reason column: " . $e->getMessage() . "\n";
 }
 
+// Ensure related_id column exists in notifications table
+try {
+    $stmt = $pdo->query("SHOW COLUMNS FROM notifications LIKE 'related_id'");
+    if (!$stmt->fetch()) {
+        echo "Adding related_id column to notifications table...\n";
+        $pdo->exec("ALTER TABLE notifications ADD COLUMN related_id INT NULL AFTER message");
+        echo "✓ related_id column added\n";
+    } else {
+        echo "✓ related_id column already exists\n";
+    }
+} catch(PDOException $e) {
+    echo "⚠ Could not check/add related_id column: " . $e->getMessage() . "\n";
+}
+
 echo "\n=== Setup Complete! ===\n";
 echo "All tables have been created successfully.\n";
 
