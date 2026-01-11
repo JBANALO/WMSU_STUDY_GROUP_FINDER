@@ -123,6 +123,22 @@ foreach ($tables as $tableName => $sql) {
     }
 }
 
+echo "\n=== Checking for missing columns ===\n";
+
+// Ensure middle_name column exists in users table (for existing deployments)
+try {
+    $stmt = $pdo->query("SHOW COLUMNS FROM users LIKE 'middle_name'");
+    if (!$stmt->fetch()) {
+        echo "Adding middle_name column to users table...\n";
+        $pdo->exec("ALTER TABLE users ADD COLUMN middle_name VARCHAR(255) NULL AFTER first_name");
+        echo "✓ middle_name column added\n";
+    } else {
+        echo "✓ middle_name column already exists\n";
+    }
+} catch(PDOException $e) {
+    echo "⚠ Could not check/add middle_name column: " . $e->getMessage() . "\n";
+}
+
 echo "\n=== Setup Complete! ===\n";
 echo "All tables have been created successfully.\n";
 
