@@ -1,10 +1,18 @@
 <?php
 // Diagnose users table structure on Railway
-require_once 'config/database.php';
-
 echo "=== DIAGNOSING USERS TABLE ===\n\n";
 
+// Get database connection directly from environment variables
+$host = getenv('DB_HOST') ?: 'mysql.railway.internal';
+$dbname = getenv('DB_NAME') ?: 'railway';
+$username = getenv('DB_USER') ?: 'root';
+$password = getenv('DB_PASS') ?: '';
+$port = getenv('DB_PORT') ?: '3306';
+
 try {
+    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
     $stmt = $pdo->query("DESCRIBE users");
     $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
