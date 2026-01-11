@@ -39,6 +39,7 @@
         }
         .auth-form-container {
             max-width: 100% !important;
+            padding-bottom: 20px !important;
         }
         .auth-right h2 {
             font-size: 20px !important;
@@ -63,9 +64,11 @@
             }
             .auth-right {
                 padding: 20px 15px !important;
+                max-height: calc(100vh - 20px) !important;
             }
             .auth-form-container {
                 max-width: 100% !important;
+                padding-bottom: 30px !important;
             }
         }
     }
@@ -94,8 +97,8 @@
         </div>
 
         <!-- Right Side - Form -->
-        <div class="auth-right" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px; overflow-y: auto;">
-            <div class="auth-form-container" style="width: 100%; max-width: 350px;">
+        <div class="auth-right" style="display: flex; flex-direction: column; align-items: center; padding: 30px 30px 20px 30px; overflow-y: auto; max-height: 700px;">
+            <div class="auth-form-container" style="width: 100%; max-width: 350px; padding-bottom: 20px;">
                 <h2 style="color: #8B0000; margin-bottom: 8px; text-align: center; font-size: 24px; font-weight: 700;">Create Account</h2>
                 <p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 13px;">Join our study group community</p>
 
