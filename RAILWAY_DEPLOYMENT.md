@@ -164,11 +164,14 @@ CREATE TABLE user_last_seen (
 - Make backups regularly through Railway dashboard
 
 ### File Uploads
-- Uploads folder (`/uploads`) is ephemeral in Railway
-- For production, use a cloud storage solution like:
-  - AWS S3
-  - Cloudinary
-  - Railway's Disk storage
+- **IMPORTANT:** Uploads folder (`/uploads`) is ephemeral in Railway
+- **Files will be DELETED** when Railway redeploys or restarts the container
+- **Current status:** File upload button is DISABLED on Railway deployment
+- For production, you MUST use a cloud storage solution:
+  - **Cloudinary** (recommended for images - free tier available)
+  - **AWS S3** (best for all file types)
+  - **Railway Volumes** (persistent disk storage)
+- Alternative: Configure Railway Volumes for persistent storage (see Railway docs)
 
 ### Email Configuration
 - Update `.env` with actual SMTP credentials for email notifications
