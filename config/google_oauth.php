@@ -48,7 +48,7 @@ define('GOOGLE_CLIENT_SECRET',
 
 // Redirect URI
 define('GOOGLE_REDIRECT_URI', $is_production
-    ? 'https://web-production-...up.railway.app/handlers/google_oauth_handler.php'
+    ? 'https://web-production-76301.up.railway.app/handlers/google_oauth_handler.php'
     : 'http://localhost:8000/handlers/google_oauth_handler.php'
 );
 
