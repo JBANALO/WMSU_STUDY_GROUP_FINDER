@@ -148,7 +148,95 @@
                     <button type="submit" class="btn" style="margin-top: 15px; margin-bottom: 12px;">Create Account</button>
                 </form>
 
-                <p style="text-align: center; color: #666; font-size: 13px;">
+                <div style="text-align: center; margin: 12px 0;">
+                    <p style="color: #999; font-size: 12px; margin: 0;">OR</p>
+                </div>
+
+                <!-- Google Sign-In Button -->
+                <div style="display: flex; justify-content: center; margin: 15px 0;">
+                    <div id="googleSignUpDiv"></div>
+                </div>
+
+                <script src="https://accounts.google.com/gsi/client" async defer></script>
+                <script>
+                function handleCredentialResponseRegister(response) {
+                    console.log('Google Sign-Up credential received');
+                    
+                    if (!response || !response.credential) {
+                        console.error('No credential in response');
+                        alert('Google Sign-Up failed. Please try again.');
+                        return;
+                    }
+                    
+                    // Send JWT token to backend for verification
+                    fetch('handlers/google_signin_handler.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            credential: response.credential
+                        })
+                    })
+                    .then(res => {
+                        console.log('Response status:', res.status);
+                        if (!res.ok) {
+                            throw new Error('HTTP error ' + res.status);
+                        }
+                        return res.json();
+                    })
+                    .then(data => {
+                        console.log('Server response:', data);
+                        if (data.success) {
+                            window.location.href = 'index.php?page=dashboard';
+                        } else {
+                            alert(data.message || 'Registration failed. Please try again.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred during registration: ' + error.message);
+                    });
+                }
+                
+                // Initialize Google Sign-In when library loads
+                window.onload = function() {
+                    console.log('Initializing Google Sign-Up...');
+                    
+                    if (typeof google === 'undefined') {
+                        console.error('Google Sign-In library not loaded');
+                        return;
+                    }
+                    
+                    try {
+                        google.accounts.id.initialize({
+                            client_id: "174568861864-ed5p6jgvvbuc6gjbnrkvv5ki8h9vfkng.apps.googleusercontent.com",
+                            callback: handleCredentialResponseRegister,
+                            auto_select: false,
+                            cancel_on_tap_outside: true
+                        });
+                        
+                        google.accounts.id.renderButton(
+                            document.getElementById("googleSignUpDiv"),
+                            { 
+                                type: "standard",
+                                theme: "outline", 
+                                size: "large",
+                                text: "signup_with",
+                                shape: "rectangular",
+                                logo_alignment: "left",
+                                width: 350
+                            }
+                        );
+                        
+                        console.log('Google Sign-Up button rendered successfully');
+                    } catch (error) {
+                        console.error('Error initializing Google Sign-Up:', error);
+                    }
+                };
+                </script>
+
+                <p style="text-align: center; color: #666; font-size: 13px; margin-top: 12px;">
                     Already have an account? <a href="?page=login" style="color: #8B0000; font-weight: 600; text-decoration: none;">Sign In</a>
                 </p>
             </div>
