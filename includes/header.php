@@ -1,4 +1,4 @@
-<?php if (!isset($page) || ($page !== 'home' && $page !== 'register' && $page !== 'login')): ?>
+<?php if (!isset($page) || ($page !== 'home' && $page !== 'register' && $page !== 'login' && $page !== 'forgot_password' && $page !== 'reset_password')): ?>
 <div class="header">
     <div class="header-left">
         <div class="logo" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; margin-right: 15px;">

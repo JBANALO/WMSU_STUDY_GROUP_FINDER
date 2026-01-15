@@ -47,6 +47,12 @@ if ($page === 'logout') {
             case 'login':
                 include 'pages/login.php';
                 break;
+            case 'forgot_password':
+                include 'pages/forgot_password.php';
+                break;
+            case 'reset_password':
+                include 'pages/reset_password.php';
+                break;
             case 'dashboard':
                 if (!isLoggedIn()) redirectTo('login');
                 include 'pages/dashboard.php';

@@ -5,8 +5,9 @@
     },
     "config": {
         "platform": {
-            "php": "8.3"
+            "php": "8.0"
         },
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "platform-check": false
     }
 }
