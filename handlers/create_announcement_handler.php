@@ -23,7 +23,7 @@ try {
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
     $content = isset($_POST['content']) ? trim($_POST['content']) : '';
     $announcement_type = isset($_POST['announcement_type']) ? $_POST['announcement_type'] : 'announcement';
-    $due_date = isset($_POST['due_date']) ? $_POST['due_date'] : null;
+    $due_date = (isset($_POST['due_date']) && trim($_POST['due_date']) !== '') ? $_POST['due_date'] : null;
     $user_id = intval($_SESSION['user_id']);
     
     $attachment = null;
