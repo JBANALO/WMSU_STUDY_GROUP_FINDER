@@ -177,11 +177,13 @@ $is_member = (bool)$stmt->fetch();
             padding: 1.5rem;
             margin-bottom: 1rem;
             transition: all 0.2s;
+            cursor: pointer;
         }
 
         .announcement-card:hover {
             border-color: #8B0000;
             box-shadow: 0 4px 12px rgba(139, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
 
         .announcement-header {
@@ -276,6 +278,7 @@ $is_member = (bool)$stmt->fetch();
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
         }
 
         .modal-content {
@@ -283,8 +286,48 @@ $is_member = (bool)$stmt->fetch();
             margin: 5% auto;
             padding: 2rem;
             border-radius: 16px;
-            max-width: 600px;
+            max-width: 700px;
             position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        .view-announcement-modal .modal-title {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .view-announcement-modal .modal-content-text {
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            white-space: pre-wrap;
+        }
+
+        .view-announcement-modal .modal-attachment {
+            margin: 1.5rem 0;
+        }
+
+        .view-announcement-modal .modal-attachment img {
+            max-width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
         .close-modal {
@@ -571,6 +614,14 @@ $is_member = (bool)$stmt->fetch();
         </div>
     </div>
 
+    <!-- View Announcement Modal -->
+    <div id="viewAnnouncementModal" class="modal view-announcement-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('viewAnnouncementModal')">&times;</span>
+            <div id="viewAnnouncementContent"></div>
+        </div>
+    </div>
+
     <script>
         const GROUP_ID = <?= $group_id ?>;
         const USER_ID = <?= $_SESSION['user_id'] ?>;
@@ -646,6 +697,67 @@ $is_member = (bool)$stmt->fetch();
             });
         }
 
+        function viewAnnouncement(announcement) {
+            const typeIcons = {
+                'announcement': '<i class="fas fa-bullhorn"></i>',
+                'assignment': '<i class="fas fa-tasks"></i>',
+                'material': '<i class="fas fa-book"></i>'
+            };
+
+            let attachmentHTML = '';
+            if (announcement.attachment) {
+                const fileName = announcement.attachment.split('/').pop();
+                const fileExt = fileName.split('.').pop().toLowerCase();
+                const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExt);
+                
+                if (isImage) {
+                    attachmentHTML = `
+                        <div class="modal-attachment">
+                            <img src="${announcement.attachment}" onclick="window.open('${announcement.attachment}', '_blank');" alt="Attachment">
+                        </div>
+                    `;
+                } else {
+                    attachmentHTML = `
+                        <div class="announcement-attachment">
+                            <a href="${announcement.attachment}" download>
+                                <i class="fas fa-download"></i> ${fileName}
+                            </a>
+                        </div>
+                    `;
+                }
+            }
+            
+            let dueDateHTML = '';
+            if (announcement.due_date) {
+                const dueDate = new Date(announcement.due_date);
+                dueDateHTML = `
+                    <div class="due-date-badge">
+                        <i class="fas fa-clock"></i> Due: ${dueDate.toLocaleString()}
+                    </div>
+                `;
+            }
+
+            const content = `
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                    <div style="font-size: 1.5rem; color: #8B0000;">${typeIcons[announcement.announcement_type]}</div>
+                    <span style="color: #6b7280; font-size: 0.875rem; text-transform: uppercase; font-weight: 600;">${announcement.announcement_type}</span>
+                </div>
+                <h2 class="modal-title">${announcement.title}</h2>
+                <div style="color: #6b7280; font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    <i class="fas fa-user"></i> ${announcement.user_name}
+                    <span style="margin: 0 0.5rem;">•</span>
+                    ${announcement.date_format}
+                    ${announcement.created_at !== announcement.updated_at ? ` • Edited ${announcement.edited_format}` : ''}
+                </div>
+                ${dueDateHTML}
+                ${announcement.content ? `<div class="modal-content-text">${announcement.content}</div>` : ''}
+                ${attachmentHTML}
+            `;
+
+            document.getElementById('viewAnnouncementContent').innerHTML = content;
+            openModal('viewAnnouncementModal');
+        }
+
         function loadAnnouncements() {
             fetch('handlers/get_announcements_handler.php?group_id=' + GROUP_ID)
                 .then(response => response.json())
@@ -664,6 +776,7 @@ $is_member = (bool)$stmt->fetch();
                             
                             const card = document.createElement('div');
                             card.className = 'announcement-card';
+                            card.onclick = function() { viewAnnouncement(announcement); };
                             
                             let attachmentHTML = '';
                             if (announcement.attachment) {
