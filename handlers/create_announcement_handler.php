@@ -19,7 +19,6 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     require_once dirname(__DIR__) . '/config/database.php';
-    require_once dirname(__DIR__) . '/config/cloudinary.php';
     
     $group_id = isset($_POST['group_id']) ? intval($_POST['group_id']) : 0;
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
@@ -50,41 +49,66 @@ try {
             exit;
         }
         
-        $cloudinary_uploaded = false;
+        $cloudinary_success = false;
         
-        // Try Cloudinary first, fallback to local storage
-        if (isCloudinaryConfigured()) {
-            try {
-                if (initCloudinary()) {
-                    $upload_result = \Cloudinary\Uploader::upload($file['tmp_name'], [
-                        'folder' => 'studyfinder/announcements',
-                        'resource_type' => 'auto',
-                        'use_filename' => true
-                    ]);
-                    
-                    $attachment = $upload_result['secure_url'];
-                    $cloudinary_uploaded = true;
+        // Try Cloudinary upload with full error protection
+        try {
+            // Load Cloudinary config
+            if (file_exists(dirname(__DIR__) . '/config/cloudinary.php')) {
+                require_once dirname(__DIR__) . '/config/cloudinary.php';
+                
+                if (function_exists('isCloudinaryConfigured') && isCloudinaryConfigured()) {
+                    if (function_exists('initCloudinary') && initCloudinary()) {
+                        // Check if Cloudinary class exists
+                        if (class_exists('\\Cloudinary\\Uploader')) {
+                            $upload_result = \Cloudinary\Uploader::upload($file['tmp_name'], [
+                                'folder' => 'studyfinder/announcements',
+                                'resource_type' => 'auto',
+                                'use_filename' => true
+                            ]);
+                            
+                            if (isset($upload_result['secure_url'])) {
+                                $attachment = $upload_result['secure_url'];
+                                $cloudinary_success = true;
+                            }
+                        }
+                    }
                 }
-            } catch (Exception $e) {
-                error_log('Cloudinary upload failed: ' . $e->getMessage());
-                // Fallback to local storage below
             }
+        } catch (Exception $e) {
+            error_log('Cloudinary upload error: ' . $e->getMessage());
+            $cloudinary_success = false;
+        } catch (Error $e) {
+            error_log('Cloudinary fatal error: ' . $e->getMessage());
+            $cloudinary_success = false;
         }
         
-        // Fallback to local storage if Cloudinary not configured or failed
-        if (!$cloudinary_uploaded) {
-            $uploadDir = dirname(__DIR__) . '/uploads/announcements';
-            
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
-            }
-            
-            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-            $filename = uniqid('announcement_') . '_' . time() . '.' . $ext;
-            $filepath = $uploadDir . '/' . $filename;
-            
-            if (move_uploaded_file($file['tmp_name'], $filepath)) {
-                $attachment = 'uploads/announcements/' . $filename;
+        // Fallback to local storage if Cloudinary failed or not available
+        if (!$cloudinary_success) {
+            try {
+                $uploadDir = dirname(__DIR__) . '/uploads/announcements';
+                
+                if (!is_dir($uploadDir)) {
+                    @mkdir($uploadDir, 0755, true);
+                }
+                
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = uniqid('announcement_') . '_' . time() . '.' . $ext;
+                $filepath = $uploadDir . '/' . $filename;
+                
+                if (move_uploaded_file($file['tmp_name'], $filepath)) {
+                    $attachment = 'uploads/announcements/' . $filename;
+                } else {
+                    ob_end_clean();
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'error' => 'Failed to upload file']);
+                    exit;
+                }
+            } catch (Exception $e) {
+                ob_end_clean();
+                http_response_code(500);
+                echo json_encode(['success' => false, 'error' => 'Upload error: ' . $e->getMessage()]);
+                exit;
             }
         }
     }
