@@ -18,6 +18,7 @@ if (!isset($_SESSION['user_id'])) {
 
 try {
     require_once dirname(__DIR__) . '/config/database.php';
+    require_once dirname(__DIR__) . '/config/cloudinary.php';
     
     $group_id = isset($_POST['group_id']) ? intval($_POST['group_id']) : 0;
     $title = isset($_POST['title']) ? trim($_POST['title']) : '';
@@ -29,11 +30,6 @@ try {
     $attachment = null;
     if (isset($_FILES['attachment']) && $_FILES['attachment']['error'] == UPLOAD_ERR_OK) {
         $file = $_FILES['attachment'];
-        $uploadDir = dirname(__DIR__) . '/uploads/announcements';
-        
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0755, true);
-        }
         
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 
                          'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -53,12 +49,37 @@ try {
             exit;
         }
         
-        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $filename = uniqid('announcement_') . '_' . time() . '.' . $ext;
-        $filepath = $uploadDir . '/' . $filename;
+        // Try Cloudinary first, fallback to local storage
+        if (isCloudinaryConfigured() && initCloudinary()) {
+            try {
+                $upload_result = \Cloudinary\Uploader::upload($file['tmp_name'], [
+                    'folder' => 'studyfinder/announcements',
+                    'resource_type' => 'auto',
+                    'use_filename' => true
+                ]);
+                
+                $attachment = $upload_result['secure_url'];
+            } catch (Exception $e) {
+                error_log('Cloudinary upload failed: ' . $e->getMessage());
+                // Fallback to local storage below
+            }
+        }
         
-        if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            $attachment = 'uploads/announcements/' . $filename;
+        // Fallback to local storage if Cloudinary not configured or failed
+        if (!$attachment) {
+            $uploadDir = dirname(__DIR__) . '/uploads/announcements';
+            
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $filename = uniqid('announcement_') . '_' . time() . '.' . $ext;
+            $filepath = $uploadDir . '/' . $filename;
+            
+            if (move_uploaded_file($file['tmp_name'], $filepath)) {
+                $attachment = 'uploads/announcements/' . $filename;
+            }
         }
     }
     

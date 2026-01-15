@@ -1,7 +1,8 @@
 {
     "require": {
         "google/apiclient": "^2.18",
-        "phpmailer/phpmailer": "^7.0"
+        "phpmailer/phpmailer": "^7.0",
+        "cloudinary/cloudinary_php": "^3.1"
     },
     "config": {
         "platform": {
