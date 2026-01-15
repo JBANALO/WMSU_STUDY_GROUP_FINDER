@@ -50,16 +50,21 @@ try {
             exit;
         }
         
+        $cloudinary_uploaded = false;
+        
         // Try Cloudinary first, fallback to local storage
-        if (isCloudinaryConfigured() && initCloudinary()) {
+        if (isCloudinaryConfigured()) {
             try {
-                $upload_result = \Cloudinary\Uploader::upload($file['tmp_name'], [
-                    'folder' => 'studyfinder/announcements',
-                    'resource_type' => 'auto',
-                    'use_filename' => true
-                ]);
-                
-                $attachment = $upload_result['secure_url'];
+                if (initCloudinary()) {
+                    $upload_result = \Cloudinary\Uploader::upload($file['tmp_name'], [
+                        'folder' => 'studyfinder/announcements',
+                        'resource_type' => 'auto',
+                        'use_filename' => true
+                    ]);
+                    
+                    $attachment = $upload_result['secure_url'];
+                    $cloudinary_uploaded = true;
+                }
             } catch (Exception $e) {
                 error_log('Cloudinary upload failed: ' . $e->getMessage());
                 // Fallback to local storage below
@@ -67,7 +72,7 @@ try {
         }
         
         // Fallback to local storage if Cloudinary not configured or failed
-        if (!$attachment) {
+        if (!$cloudinary_uploaded) {
             $uploadDir = dirname(__DIR__) . '/uploads/announcements';
             
             if (!is_dir($uploadDir)) {
