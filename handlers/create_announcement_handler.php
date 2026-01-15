@@ -1,7 +1,8 @@
 <?php
 ob_start();
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('log_errors', 1);
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -130,10 +131,12 @@ try {
 } catch(PDOException $e) {
     ob_end_clean();
     http_response_code(500);
+    error_log('Announcement creation error: ' . $e->getMessage());
     echo json_encode(['success' => false, 'error' => 'Database error: ' . $e->getMessage()]);
 } catch(Exception $e) {
     ob_end_clean();
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => 'Server error']);
+    error_log('Announcement creation error: ' . $e->getMessage());
+    echo json_encode(['success' => false, 'error' => 'Server error: ' . $e->getMessage()]);
 }
 exit;
