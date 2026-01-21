@@ -49,7 +49,7 @@ try {
     }
     
     // Check if email is WMSU email
-    if (!str_ends_with($user_data['email'], '@wmsu.edu.ph')) {
+    if (substr($user_data['email'], -13) !== '@wmsu.edu.ph') {
         error_log("Non-WMSU email attempted: " . $user_data['email']);
         echo json_encode(['success' => false, 'message' => 'Only WMSU emails (@wmsu.edu.ph) are allowed']);
         exit;

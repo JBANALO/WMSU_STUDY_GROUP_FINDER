@@ -30,7 +30,7 @@ try {
         $picture = $google_account->picture ?? '';
         
         // Verify email is from WMSU domain
-        if (!str_ends_with($email, '@wmsu.edu.ph')) {
+        if (substr($email, -13) !== '@wmsu.edu.ph') {
             $_SESSION['error'] = "Please use your WMSU email address (@wmsu.edu.ph)";
             header("Location: ../index.php?page=login");
             exit();

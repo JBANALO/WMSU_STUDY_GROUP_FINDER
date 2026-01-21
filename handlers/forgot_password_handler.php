@@ -18,7 +18,7 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 // Check if email is WMSU email
-if (!str_ends_with($email, '@wmsu.edu.ph')) {
+if (substr($email, -13) !== '@wmsu.edu.ph') {
     $_SESSION['error'] = "Please use your WMSU email address.";
     header('Location: ../index.php?page=forgot_password');
     exit;
