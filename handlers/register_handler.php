@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $confirm_password = $_POST['confirm_password'];
 
     // Validate WMSU email domain
-    if (!str_ends_with($email, '@wmsu.edu.ph')) {
+    if (substr($email, -13) !== '@wmsu.edu.ph') {
         $_SESSION['error'] = "Only WMSU emails (@wmsu.edu.ph) are allowed";
         header("Location: ../index.php?page=register");
         exit();
