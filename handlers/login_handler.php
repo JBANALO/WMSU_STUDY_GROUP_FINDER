@@ -14,8 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     
-    // Validate WMSU email domain
-    if (substr($email, -13) !== '@wmsu.edu.ph') {
+    // Validate WMSU email domain (case-insensitive, PHP 7.x compatible)
+    $email_lower = strtolower($email);
+    $domain = '@wmsu.edu.ph';
+    if (substr($email_lower, -strlen($domain)) !== $domain) {
         $_SESSION['error'] = "Only WMSU emails (@wmsu.edu.ph) are allowed";
         header("Location: ../index.php?page=login");
         exit();
