@@ -48,9 +48,10 @@ try {
         exit;
     }
     
-    // Check if email is WMSU email (case-insensitive check)
+    // Check if email is WMSU email (case-insensitive check, PHP 7.x compatible)
     $email_lower = strtolower($user_data['email']);
-    if (!str_ends_with($email_lower, '@wmsu.edu.ph')) {
+    $domain = '@wmsu.edu.ph';
+    if (substr($email_lower, -strlen($domain)) !== $domain) {
         error_log("Non-WMSU email attempted: " . $user_data['email']);
         echo json_encode(['success' => false, 'message' => 'Only WMSU emails (@wmsu.edu.ph) are allowed']);
         exit;
