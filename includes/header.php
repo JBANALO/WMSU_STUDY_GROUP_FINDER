@@ -61,7 +61,7 @@
                     <?php if (isAdmin()): ?>
                         Admin
                     <?php else: ?>
-                        <?= htmlspecialchars($_SESSION['full_name']) ?>
+                        <?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?? 'User') ?>
                     <?php endif; ?>
                     </span>
                     <i class="fas fa-caret-down"></i>

@@ -177,6 +177,8 @@ try {
     $_SESSION['email'] = $user['email'];
     $_SESSION['first_name'] = $user['first_name'];
     $_SESSION['last_name'] = $user['last_name'];
+    $_SESSION['full_name'] = $user['first_name'] . ' ' . $user['last_name'];
+    $_SESSION['is_admin'] = (stripos($user['username'], 'admin') === 0 || stripos($user['email'], 'admin') === 0);
     
     error_log("Session variables set: user_id=" . $_SESSION['user_id']);
     
