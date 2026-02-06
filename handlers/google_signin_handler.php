@@ -49,13 +49,19 @@ try {
     }
     
     // Check if email is WMSU email (case-insensitive check, PHP 7.x compatible)
-    $email_lower = strtolower($user_data['email']);
+    $email_lower = strtolower(trim($user_data['email']));
     $domain = '@wmsu.edu.ph';
-    if (substr($email_lower, -strlen($domain)) !== $domain) {
-        error_log("Non-WMSU email attempted: " . $user_data['email']);
+    $email_ending = substr($email_lower, -strlen($domain));
+    
+    error_log("Email validation - Original: " . $user_data['email'] . ", Lowercase: " . $email_lower . ", Ending: " . $email_ending . ", Expected: " . $domain);
+    
+    if ($email_ending !== $domain) {
+        error_log("Non-WMSU email attempted: " . $user_data['email'] . " (ending: '" . $email_ending . "')");
         echo json_encode(['success' => false, 'message' => 'Only WMSU emails (@wmsu.edu.ph) are allowed']);
         exit;
     }
+    
+    error_log("Email validation passed for: " . $user_data['email']);
     
     $email = $user_data['email'];
     $google_id = $user_data['sub']; // Google user ID
